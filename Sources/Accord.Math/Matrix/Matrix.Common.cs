@@ -207,17 +207,14 @@ namespace Accord.Math
             if (!objA.GetLength().IsEqual(objB.GetLength()))
                 return false;
 
-            bool jaggedA = objA.IsJagged();
-            bool jaggedB = objB.IsJagged();
-
             // TODO: Implement this cache mechanism here
             // http://blog.slaks.net/2015-06-26/code-snippets-fast-property-access-reflection/
 
+#if !NETSTANDARD1_4
             // Check if there is already an optimized method to perform this comparison
             Type typeA = objA.GetType();
             Type typeB = objB.GetType();
 
-#if !NETSTANDARD1_4
             MethodInfo equals = typeof(Matrix).GetMethod("IsEqual", new Type[] {
                     typeA, typeB, typeof(double), typeof(double)
                 });
@@ -231,7 +228,7 @@ namespace Accord.Math
 #endif
 
             // Base case: arrays contain elements of same nature (both arrays, or both values)
-            if (objA.GetType().GetElementType().IsArray == objB.GetType().GetElementType().IsArray)
+            if (typeA.GetElementType().IsArray == typeB.GetElementType().IsArray)
             {
                 var a = objA.GetEnumerator();
                 var b = objB.GetEnumerator();
